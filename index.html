@@ -14,7 +14,7 @@
             width: 100%;
             font-family: Arial, sans-serif;
             background-color: #313131;
-            color: #ffffff;
+            color: #919191;
             text-shadow: 2px 3px 5px #000000;
         
         }
@@ -291,8 +291,9 @@
                     }
                 });
                 // Add new text
-                const textNode = document.createTextNode(`RGB(${this.color.r}, ${this.color.g}, ${this.color.b})\n${this.color.hex}`);
+                const textNode = document.createTextNode(`${this.color.hex} - RGB(${this.color.r}, ${this.color.g}, ${this.color.b})`);
                 this.element.insertBefore(textNode, this.lockIcon);
+                
             }
 
             // Toggle the lock state
