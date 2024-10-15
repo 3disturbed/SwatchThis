@@ -373,6 +373,13 @@
                 alert("Invalid height. Please enter a positive number.");
                 return;
             }
+            // yes no do you want text ok yes cancel no
+            let text = prompt("Do you want to add text hex values to the image? (yes/no)", "yes");
+            if (text === "yes") {
+                text = true;
+            } else {
+                text = false;
+            }
 
             // Create an off-screen canvas
             const canvas = document.createElement('canvas');
@@ -405,6 +412,10 @@
                 // Fill rectangle with swatch color
                 ctx.fillStyle = swatch.color.hex;
                 ctx.fillRect(x, y, swatchWidth, canvas.height);
+                ctx.fillStyle = "#000000";
+                if (text) {
+                    ctx.fillText(swatch.color.hex, x, y + 10);
+                }
 
             });
 
