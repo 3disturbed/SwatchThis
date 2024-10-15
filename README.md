@@ -1,5 +1,5 @@
 
-![SwatchThis-Logo](https://github.com/user-attachments/assets/1fe00848-628b-4f9c-8289-3ce7e36a2d7b)
+![SwatchThis-Logo](https://github.com/user-attachments/assets/18c656a3-a625-49a6-8374-a32909f793f2)
 
 
 # SwatchThis
