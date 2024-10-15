@@ -9,6 +9,9 @@ Open Source Colour/color palette software because it color swatches do not need 
 
 Greetings, noble color crusaders! Have you ever found yourself lost in the labyrinthine depths of **50-step tutorials** or entrapped by the sinister clutches of **pro plans**? Fear not! For I, Sir Palette-a-Lot, have embarked on a daring adventure to bring you the simplest, yet most splendid way to craft dazzling color palettes without the need for a lengthy scroll of instructions or a chest of golden coins.
 
+![image](https://github.com/user-attachments/assets/cdb43e29-96be-47db-baaf-77f7358c42c6)
+
+
 ## **Features: What Sorcery Does This Offer? 🧙‍♂️✨**
 
 - **Swashbuckling Swatches:** Assemble a merry band of color swatches that play nicely together, ensuring your palette is as harmonious as a well-tuned lute.
