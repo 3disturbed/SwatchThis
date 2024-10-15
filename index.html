@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Swatch-This</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        html, body {
+            height: 100%;
+            width: 100%;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        #controls {
+            padding: 10px;
+            background-color: #303030;
+            color: #616161;
+            display: flex;
+            gap: 10px;
+            position: fixed;
+            top: 0;
+            width: 100vw;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        #controls button {
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            background-color: #3f3f3f;
+            color: #fff;
+            transition: background-color 0.3s;
+            margin-left: auto;
+            margin-right: auto;
+            border-radius: 10px;
+        }
+        #controls button:hover {
+            background-color: #0056b3;
+        }
+        #swatch-container {
+            display: flex;
+            flex-wrap: wrap;
+            height: 100vh;
+            width: 100%;
+            padding-top: 60px; /* To prevent overlap with fixed controls */
+        }
+        .swatch {
+            position: relative;
+            flex: 1 0 20%; /* Adjust the number to control swatch width */
+            height: 100% /* Adjust based on number of rows */
+            border: 1px solid #ccc;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: bold;
+            user-select: none;
+            transition: transform 0.2s;
+            overflow: hidden;
+        }
+        .swatch.locked {
+            border: 2px solid #000;
+            cursor: default;
+
+      
+        }
+
+        .lock-icon {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            color: #fff;
+            text-shadow: 0 0 2px #000;
+            height: 50px;
+            width: 50px;
+        }
+        /* Responsive adjustments */
+        @media (max-width: 1200px) {
+            .swatch {
+                flex: 1 0 25%;
+                height: calc(100vh / 4);
+            }
+        }
+        @media (max-width: 900px) {
+            .swatch {
+                flex: 1 0 33.33%;
+                height: calc(100vh / 3);
+            }
+        }
+        @media (max-width: 600px) {
+            .swatch {
+                flex: 1 0 50%;
+                height: calc(100vh / 2);
+            }
+        }
+        @media (max-width: 400px) {
+            .swatch {
+                flex: 1 0 100%;
+                height: 100vh;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="controls">
+        <h2>Swatch-This</h2> <hr>
+        <button id="add-swatch">Add Swatch</button>
+        <button id="remove-swatch">Remove Swatch</button>
+        <button id="lock-all-swatch">Lock All 🔓</button>
+        <button id="save-palette">Save Palette</button><hr>By Ben Darlington
+    </div>
+
+    <div id="swatch-container">
+        <!-- Swatches will be dynamically added here -->
+    </div>
+
+    <script>
+        // Swatch Class Definition
+        class Swatch {
+            constructor(container) {
+                this.container = container;
+                this.locked = false;
+                this.createElement();
+                this.setColor();
+            }
+
+            // Generate a random RGB color
+            static getRandomColor() {
+                const r = Math.floor(Math.random() * 256);
+                const g = Math.floor(Math.random() * 256);
+                const b = Math.floor(Math.random() * 256);
+                return { r, g, b };
+            }
+
+            // Convert RGB to HEX
+            static rgbToHex(r, g, b) {
+                return "#" + [r, g, b].map(x => {
+                    const hex = x.toString(16);
+                    return hex.length === 1 ? '0' + hex : hex;
+                }).join('');
+            }
+
+            // Create the swatch DOM element
+            createElement() {
+                this.element = document.createElement('div');
+                this.element.classList.add('swatch');
+                this.element.dataset.locked = 'false';
+
+                // Lock icon
+                this.lockIcon = document.createElement('span');
+                this.lockIcon.classList.add('lock-icon');
+                this.lockIcon.innerHTML = '🔓';
+                this.element.appendChild(this.lockIcon);
+
+                // Undo icon
+                this.undoIcon = document.createElement('span');
+                this.undoIcon.classList.add('undo-icon');
+                this.undoIcon.innerHTML = '↩️';
+                this.element.appendChild(this.undoIcon);
+
+                // Event listener to toggle lock
+                this.lockIcon.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.toggleLock();
+                });
+
+                // Event listener to undo color
+                this.undoIcon.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.undoColor();
+                });
+
+                // Event listener to randomize individual swatch on click
+                this.element.addEventListener('click', () => {
+                    if (!this.locked) {
+                        this.setColor();
+                    }
+                });
+
+                // Append to container
+                this.container.appendChild(this.element);
+            }
+
+            // Set a random color and update display
+            setColor() {
+                // Store the current color in lastColor before changing it
+                if (this.color) { // Ensure there is a current color to store
+                    this.lastColor = { r: this.color.r, g: this.color.g, b: this.color.b };
+                }
+                const color = Swatch.getRandomColor();
+                const { r, g, b } = color;
+                const hex = Swatch.rgbToHex(r, g, b);
+                this.color = { r, g, b, hex };
+                this.element.style.backgroundColor = hex;
+                this.updateText();
+            }
+
+            // Undo the color change
+            undoColor() {
+                if (this.lastColor) { // Ensure there is a color to undo to
+                    const { r, g, b } = this.lastColor;
+                    const hex = Swatch.rgbToHex(r, g, b);
+                    this.color = { r, g, b, hex };
+                    this.element.style.backgroundColor = hex;
+                    this.updateText();
+                    // Clear lastColor after undoing
+                    this.lastColor = null;
+                }
+            }
+
+            // Update the text content with RGB and HEX values
+            updateText() {
+                // Clear existing text nodes except the lock and undo icons
+                Array.from(this.element.childNodes).forEach(node => {
+                    if (node.nodeType === Node.TEXT_NODE) {
+                        this.element.removeChild(node);
+                    }
+                });
+                // Add new text
+                const textNode = document.createTextNode(`RGB(${this.color.r}, ${this.color.g}, ${this.color.b})\n${this.color.hex}`);
+                this.element.insertBefore(textNode, this.lockIcon);
+            }
+
+            // Toggle the lock state
+            toggleLock() {
+                this.locked = !this.locked;
+                this.element.dataset.locked = this.locked.toString();
+                this.lockIcon.innerHTML = this.locked ? '🔒' : '🔓';
+                this.element.classList.toggle('locked', this.locked);
+            }
+
+            // Lock or unlock the swatch programmatically
+            setLock(state) {
+                this.locked = state;
+                this.element.dataset.locked = this.locked.toString();
+                this.lockIcon.innerHTML = this.locked ? '🔒' : '🔓';
+                this.element.classList.toggle('locked', this.locked);
+            }
+        }
+
+        // Main Script
+        const swatchContainer = document.getElementById('swatch-container');
+        const addButton = document.getElementById('add-swatch');
+        const removeButton = document.getElementById('remove-swatch');
+        const lockAllButton = document.getElementById('lock-all-swatch');
+        const savePaletteButton = document.getElementById('save-palette'); // Save Palette Button
+
+        let allLocked = false;
+        const swatches = [];
+
+        // Function to add a new swatch
+        function addSwatch() {
+            const swatch = new Swatch(swatchContainer);
+            swatches.push(swatch);
+        }
+
+        // Function to remove the last swatch
+        function removeSwatch() {
+            if (swatches.length > 0) {
+                // find the last swatch that is not locked
+                const lastSwatch = [...swatches].reverse().find(swatch => !swatch.locked);
+                if (lastSwatch) {
+                    lastSwatch.element.remove();
+                    swatches.splice(swatches.indexOf(lastSwatch), 1);
+                }
+            }
+        }
+
+        // Function to randomize all non-locked swatches
+        function randomizeSwatches() {
+            swatches.forEach(swatch => {
+                if (!swatch.locked) {
+                    swatch.setColor();
+                }
+            });
+        }
+
+        // Function to lock/unlock all swatches
+        function toggleLockAll() {
+            allLocked = !allLocked;
+            swatches.forEach(swatch => {
+                swatch.setLock(allLocked);
+            });
+            lockAllButton.textContent = allLocked ? 'Unlock All 🔒' : 'Lock All 🔓';
+        }
+
+          // Function to save the palette as an image
+          function savePalette() {
+            // Prompt user for width and height
+            let width = parseInt(prompt("Enter the width of the palette image in pixels:", "800"));
+            if (isNaN(width) || width <= 0) {
+                alert("Invalid width. Please enter a positive number.");
+                return;
+            }
+
+            let height = parseInt(prompt("Enter the height of the palette image in pixels:", "600"));
+            if (isNaN(height) || height <= 0) {
+                alert("Invalid height. Please enter a positive number.");
+                return;
+            }
+
+            // Create an off-screen canvas
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+
+            // Calculate the number of swatches
+            const numSwatches = swatches.length;
+            if (numSwatches === 0) {
+                alert("No swatches to save.");
+                return;
+            }
+
+            // Determine grid layout (rows and columns)
+            // For simplicity, aim for a square grid as much as possible
+            const columns = Math.ceil(Math.sqrt(numSwatches));
+            const rows = Math.ceil(numSwatches / columns);
+
+            const swatchWidth = width / columns;
+            const swatchHeight = height / rows;
+
+            // Draw each swatch as a rectangle
+            swatches.forEach((swatch, index) => {
+                const row = 1
+                const col = index % columns;
+                const x = (canvas.width / swatches.length) * index;
+                const y = 1;
+
+                // Fill rectangle with swatch color
+                ctx.fillStyle = swatch.color.hex;
+                ctx.fillRect(x, y, swatchWidth, canvas.height);
+
+            });
+
+            // Convert canvas to data URL
+            const dataURL = canvas.toDataURL('image/png');
+
+            // Create a temporary link to trigger download
+            const link = document.createElement('a');
+            link.href = dataURL;
+            link.download = 'palette.png';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Event listeners for buttons
+        addButton.addEventListener('click', addSwatch);
+        removeButton.addEventListener('click', removeSwatch);
+        lockAllButton.addEventListener('click', toggleLockAll);
+        savePaletteButton.addEventListener('click', savePalette);
+
+        // Event listener for space bar to randomize
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                randomizeSwatches();
+            }
+        });
+
+        // Initialize with a number of swatches to fill the screen
+        function initializeSwatches() {
+            // Calculate how many swatches are needed based on current screen size
+            const swatchWidthPercent = 20; // Based on flex: 1 0 20%
+            const swatchHeight = window.innerHeight / 5; // Based on height: calc(100vh / 5)
+            const numColumns = Math.floor(100 / swatchWidthPercent);
+            const numRows = Math.floor(window.innerHeight / swatchHeight);
+            const numSwatches = numColumns * numRows;
+            for (let i = 0; i < numSwatches; i++) {
+                addSwatch();
+            }
+        }
+
+        initializeSwatches();
+
+        // Optional: Adjust swatches on window resize to maintain full coverage
+        window.addEventListener('resize', () => {
+            // For simplicity, this example initializes once.
+            // Implement dynamic adjustment if needed.
+        });
+    </script>
+
+</body>
+</html>
