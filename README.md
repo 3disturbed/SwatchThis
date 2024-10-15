@@ -26,20 +26,24 @@ you should now have index.html. Its the portablle scroll to summon the Swatch-Th
 Double-click the index.html file, or summon it through your favorite web browser.
 And lo, the application shall appear before your very eyes, ready for your creative exploits!
 
-##Usage: How to Ride the Unicorn 🦄🎨
-Add Swatches:
+## Usage: How to Ride the Unicorn 🦄🎨
+
+## Add Swatches:
 
 Click the Add Swatch button to introduce a new color to your palette. It's as easy as convincing a shrubbery to dance!
-Remove Swatches:
+
+## Remove Swatches:
 
 Click the Remove Swatch button to bid farewell to the least favorite color swatch. Goodbye, and may you find it in a better palette!
 Lock All Swatches:
 
 With a single click, lock or unlock all swatches simultaneously. It's like putting all your knights in a protective moat or releasing them to gallop freely.
-Save the Palette:
 
-Click the Save Palette button, enter your desired dimensions, and watch as your palette transforms into a magnificent image ready to be displayed, shared, or used in your next artistic conquest.
-Randomize with the Space Bar:
+## Save the Palette:
+
+Click the Save Palette button, enter your desired dimensions, Confirm if you want some hex code on the tiles and watch as your palette transforms into a magnificent image ready to be displayed, shared, or used in your next artistic conquest.
+
+## Randomize with the Space Bar:
 
 Press the space bar to unleash a whirlwind of color changes across your swatches. Just make sure you're not mid-sword fight!
 Contribution: Join the Knights of the Color Table 🏇🎨
