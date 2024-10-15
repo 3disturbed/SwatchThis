@@ -15,7 +15,7 @@ Greetings, noble color crusaders! Have you ever found yourself lost in the labyr
 
 ## **Installation: Summoning the Application 🛠️🔮**
 
-Click here.[Use The Magic Scroll From Here!](https://3disturbed.github.io/SwatchThis/){:target="_blank"}
+Click here.[Use The Magic Scroll From Here!](https://3disturbed.github.io/SwatchThis/)
 
 1. **Clone the Repository:**
    ```bash
