@@ -1,3 +1,6 @@
+
+![SwatchThis-Logo](https://github.com/user-attachments/assets/0088314d-1b35-4c38-a9dc-671fe24f06f4)
+
 # SwatchThis
 Open Source Colour/color palette software because it color swatches do not need a pro feature plan or 50 step tutorial...
 
