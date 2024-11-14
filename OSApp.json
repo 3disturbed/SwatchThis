@@ -1,0 +1,8 @@
+{
+  "name": "Swatch This",
+  "icon": "https://3disturbed.github.io/SwatchThis/Icon.png",
+  "link": "https://3disturbed.github.io/SwatchThis/",
+  "repo": "https://github.com/3disturbed/SwatchThis/",
+  "type": "app",
+  "target": "frame"
+}
